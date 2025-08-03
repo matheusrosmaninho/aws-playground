@@ -3,17 +3,17 @@ name: Infra up
 on:
   pull_request:
     branches:
-      - develop
+      - main
     paths:
       - "infra/tofu/**"
   push:
     branches:
-      - develop
+      - main
     paths:
       - "infra/tofu/**"
 
 env:
-  TOFU_VERSION: 1.10.5
+  TOFU_VERSION: "v1.10.5"
 
 jobs:
   infra_up:
