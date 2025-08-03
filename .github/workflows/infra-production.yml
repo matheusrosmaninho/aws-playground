@@ -5,11 +5,13 @@ on:
     branches:
       - main
     paths:
+      - ".github/workflows/infra-production.yml"
       - "infra/tofu/**"
   push:
     branches:
       - main
     paths:
+      - ".github/workflows/infra-production.yml"
       - "infra/tofu/**"
 
 env:
