@@ -1,0 +1,24 @@
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "6.7.0"
+    }
+  }
+
+  backend "s3" {
+    bucket = "<AWS_BUCKET_STATE_NAME>"
+    key    = "infra/aws-playground.tfstate"
+    region = "<AWS_REGION_VIRGINIA>"
+  }
+}
+
+provider "aws" {
+  region = "us-east-1"
+  default_tags {
+    tags = {
+      Environment = "playground"
+      Project     = "terminalbaka"
+    }
+  }
+}

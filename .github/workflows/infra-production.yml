@@ -1,0 +1,53 @@
+name: Infra up
+
+on:
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - "infra/tofu/**"
+  push:
+    branches:
+      - develop
+    paths:
+      - "infra/tofu/**"
+
+env:
+  TOFU_VERSION: 1.10.5
+
+jobs:
+  infra_up:
+    name: Infra up
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    environment: production
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Configure AWS Credentials Action for GitHub Actions
+        uses: aws-actions/configure-aws-credentials@v4.2.1
+        with:
+          aws-access-key-id: "${{ secrets.AWS_ACCESS_KEY }}"
+          aws-secret-access-key: "${{ secrets.AWS_SECRET_KEY }}"
+          aws-region: "${{ vars.AWS_REGION_VIRGINIA }}"
+
+      - name: OpenTofu - Setup Tofu
+        uses: opentofu/setup-opentofu@v1.0.5
+        with:
+          tofu_version: ${{ env.TOFU_VERSION }}
+
+      - name: Cria arquivo main.tf
+        run: |
+          mv main.tf.modelo main.tf
+          sed -i "s|<AWS_BUCKET_STATE_NAME>|${{ vars.AWS_BUCKET_STATE_NAME }}|g" main.tf
+          sed -i "s|<AWS_REGION_VIRGINIA>|${{ vars.AWS_REGION_VIRGINIA }}|g" main.tf
+
+      - run: tofu init
+
+      - run: tofu validate
+
+      - if: github.event_name == 'pull_request'
+        run: tofu plan
+
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: tofu apply --auto-approve
