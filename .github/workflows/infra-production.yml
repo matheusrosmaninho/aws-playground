@@ -15,7 +15,7 @@ on:
       - "infra/tofu/**"
 
 env:
-  TOFU_VERSION: "v1.10.5"
+  TOFU_VERSION: "1.10.5"
 
 jobs:
   infra_up:
@@ -34,9 +34,9 @@ jobs:
           aws-region: "${{ vars.AWS_REGION_VIRGINIA }}"
 
       - name: OpenTofu - Setup Tofu
-        uses: opentofu/setup-opentofu@v1.0.5
+        uses: opentofu/setup-opentofu@v1
         with:
-          tofu_version: ${{ env.TOFU_VERSION }}
+          tofu_version: "${{ env.TOFU_VERSION }}"
 
       - name: Cria arquivo main.tf
         run: |
